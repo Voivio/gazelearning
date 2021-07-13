@@ -105,6 +105,11 @@ if (!DEPLOY) {
             res.statusCode = 200;
             res.sendFile(path.join(__dirname, 'restricted', 'teacherPage.html'));
         });
+    app.get('/summary.html',
+        (req, res) => {
+            res.statusCode = 200;
+            res.sendFile(path.join(__dirname, 'restricted', 'summary.html'));
+        });
 
     function newUserLogin(req, res, next) {
         // Creates user directory and generate cookie

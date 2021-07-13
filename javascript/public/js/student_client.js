@@ -276,7 +276,7 @@ function fixationConfusionBinding (samples) {
 async function signaling(endpoint, data, role) {
     // post
     let headers = { 'Content-Type': 'application/json' },
-        body = JSON.stringify({ ...data, role: role });
+        body = JSON.stringify({ ...data, timestamp: Date.now(), role: role });
 
     let res = await fetch(endpoint,
         { method: 'POST', body, headers }

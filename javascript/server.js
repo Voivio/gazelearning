@@ -102,6 +102,31 @@ app.get('/teacherPage.html',
         res.sendFile(path.join(__dirname, 'restricted', 'teacherPage.html'));
     });
 
+app.get('/summary.html',
+    cookieParser(),
+    express.json({type: '*/*'}),
+    verifyTeacher,
+    async (req, res) => {
+        res.statusCode = 200;
+        res.sendFile(path.join(__dirname, 'restricted', 'summary.html'));
+    });
+
+app.get('/studentInfo',
+    cookieParser(),
+    express.json({type: '*/*'}),
+    verifyTeacher,
+    allStudents);
+
+app.get('/studentInfo/:stuNum',
+    cookieParser(),
+    express.json({type: '*/*'}),
+    verifyTeacher,
+    // async (req, res, next) => {
+    //     await sleep(200);
+    //     next()
+    // },
+    studentInfo)
+
 app.post('/gazeData/cluster', express.json(), clusteringTest);
 
 // Save and relay gaze data POSTed from students
@@ -195,7 +220,7 @@ function saveGazePoints(req, res, next) {
             `${filename}.json`
         ), {flags: 'a'});
     // ',' (comma) is the delimiter
-    writableStream.write(JSON.stringify(req.body) + ',');
+    writableStream.write(JSON.stringify(req.body) + '|');
 
     // req is a ended stream.Readable. readable.readableEnded=true;
     next();
@@ -255,6 +280,47 @@ async function receptionConfirm(req, res) {
     }
 }
 
+function allStudents(req, res) {
+    // The filename is simple the local directory and tacks on the requested url
+    let filename = `${ts.getFullYear()}-${ts.getMonth() + 1}-${ts.getDate()}`;
+    // Check if student has related info
+    let stuNums = [];
+    for (let stuNum of registeredStudents.keys()) {
+        if (fs.existsSync(path.join(FILEPATH,
+            `${req.params['stuNum']}`,
+            'info',
+            `${filename}.json`
+        ))) stuNums.push(stuNum);
+    }
+
+    res.statusCode = 200;
+    res.send(JSON.stringify(stuNums));
+}
+
+function studentInfo(req, res) {
+    // The filename is simple the local directory and tacks on the requested url
+    let filename = `${ts.getFullYear()}-${ts.getMonth() + 1}-${ts.getDate()}`;
+    // This line opens the file as a readable stream
+    const readStream = fs.createReadStream(path.join(FILEPATH,
+        `${req.params['stuNum']}`,
+        'info',
+        `${filename}.json`
+    ));
+    // const readStream = fs.createReadStream(path.join(FILEPATH, `${req.params['stuNum']}`, 'info', '2021-4-24.json'));
+    // This will wait until we know the readable stream is actually valid before piping
+    readStream.on('open', function () {
+        // This just pipes the read stream to the response object (which goes to the client)
+        readStream.pipe(res);
+    });
+    // This catches any errors that happen while creating the readable stream (usually invalid names)
+    readStream.on('error', function(err) {
+        res.end(err);
+    });
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 // ===================================
 // Some code about spectral clustering
 // Now moved to python dedicated server.

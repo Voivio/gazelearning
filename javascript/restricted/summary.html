@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Lecture summary</title>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+
+<!-- Modal. Prevent teacher from operating before scheduled time. Modal is achieved by using bootstrap.-->
+<div id="progress-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4 id="progress-modal-title">
+                    Downloading student information from server...
+                </h4>
+                <div id="progress-bar-container">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="container"></div>
+</body>
+
+<script src="js/summary.js"></script>
+</html>
