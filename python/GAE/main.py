@@ -432,7 +432,9 @@ if __name__ == '__main__':
     # the "static" directory. See:
     # http://flask.pocoo.org/docs/1.0/quickstart/#static-files. Once deployed,
     # App Engine itself will serve those files as configured in app.yaml.
-    app.run(host='0.0.0.0', port=PORT, debug=True, threaded=True)
+    app.run(host='0.0.0.0', port=PORT, debug=True, threaded=True, static_files={
+        '/demo': os.path.join(os.path.dirname(__file__), 'demo')
+    })
 else:
     # use same log handlers as in gunicorn logger
     gunicorn_logger = logging.getLogger('gunicorn.error')
